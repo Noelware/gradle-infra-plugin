@@ -84,7 +84,8 @@ public class KotlinModulePlugin implements Plugin<Project> {
                                     ext.getCurrentYear()
                                             .getOrElse(String.valueOf(
                                                     Calendar.getInstance().get(Calendar.YEAR))),
-                                    ext.getProjectEmoji().getOrElse("")).trim());
+                                    ext.getProjectEmoji().getOrElse(""))
+                            .trim());
 
                     kotlin.trimTrailingWhitespace();
                     kotlin.endWithNewline();
