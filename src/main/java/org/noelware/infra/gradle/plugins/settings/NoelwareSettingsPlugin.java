@@ -20,6 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package org.noelware.infra.gradle.plugins.settings;
 
 import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
