@@ -21,23 +21,33 @@
  * SOFTWARE.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 rootProject.name = "gradle-infra"
 
 pluginManagement {
     repositories {
+        maven("https://maven.floofy.dev/repo/releases")
+        maven("https://maven.noelware.org")
         gradlePluginPortal()
         mavenCentral()
         mavenLocal()
     }
 }
 
+buildscript {
+    dependencies {
+        classpath("org.noelware.gradle:gradle-infra-plugin:1.0.2")
+    }
+}
+
 plugins {
     id("org.gradle.toolchains.foojay-resolver") version "0.4.0"
+    id("org.noelware.gradle.settings") version "1.0.2"
     id("com.gradle.enterprise") version "3.12.3"
 }
 
 toolchainManagement {
-    @Suppress("UnstableApiUsage")
     jvm {
         javaRepositories {
             repository("foojay") {

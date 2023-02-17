@@ -1,5 +1,5 @@
 /*
- * 🐻‍❄️🐘 gradle-infra: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * gradle-infra-plugin: 🐻‍❄️🐘 Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,6 +23,7 @@
 
 package org.noelware.infra.gradle.plugins.module;
 
+import org.gradle.api.JavaVersion;
 import org.gradle.api.provider.Property;
 import org.noelware.infra.gradle.Licenses;
 
@@ -30,6 +31,12 @@ import org.noelware.infra.gradle.Licenses;
  * Represents the extension for the Java or Kotlin module plugins
  */
 public abstract class NoelwareModuleExtension {
+    /**
+     * @return {@link Property<JavaVersion>} of the minimum Java version to use for the Java/Kotlin toolchain
+     * language. By default, it will use Java 17 as the minimum.
+     */
+    public abstract Property<JavaVersion> getMinimumJavaVersion();
+
     /**
      * @return {@link Property<String>} that represents the full S3 bucket URL for the library plugins, this isn't
      * required in the module plugins.

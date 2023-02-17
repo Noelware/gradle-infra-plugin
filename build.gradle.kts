@@ -21,19 +21,31 @@
  * SOFTWARE.
  */
 
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.noelware.infra.gradle.*
 import dev.floofy.utils.gradle.*
-import java.io.StringReader
-import java.util.Properties
 
 plugins {
-    id("com.diffplug.spotless")
-
+    id("org.noelware.gradle.java-library")
     `java-gradle-plugin`
-    `maven-publish`
-    java
+}
+
+group = "org.noelware.gradle"
+description = "\uD83D\uDC3B\u200D❄️\uD83D\uDC18 gradle-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects"
+version = "$VERSION"
+
+// Check if we have the `NOELWARE_PUBLISHING_ACCESS_KEY` and `NOELWARE_PUBLISHING_SECRET_KEY` environment
+// variables, and if we do, set it in the publishing.properties loader.
+val snapshotRelease: Boolean = run {
+    val env = System.getenv("NOELWARE_PUBLISHING_IS_SNAPSHOT") ?: "false"
+    env == "true"
+}
+
+noelware {
+    projectDescription by "\uD83D\uDC3B\u200D❄️\uD83D\uDC18 Gradle plugin to configure sane defaults for Noelware's Gradle projects"
+    projectName by "gradle-infra-plugin"
+    s3BucketUrl by if (snapshotRelease) "s3://august/noelware/maven/snapshots" else "s3://august/noelware/maven"
+    unitTests by true
+    license by Licenses.MIT
 }
 
 repositories {
@@ -62,19 +74,7 @@ java {
     }
 }
 
-spotless {
-    java {
-        licenseHeaderFile("${rootProject.projectDir}/assets/HEADING")
-        trimTrailingWhitespace()
-        removeUnusedImports()
-        palantirJavaFormat()
-        endWithNewline()
-    }
-}
-
 gradlePlugin {
-    isAutomatedPublishing = false
-
     @Suppress("UnstableApiUsage")
     vcsUrl by "https://github.com/Noelware/gradle-infra"
 
@@ -118,132 +118,6 @@ tasks {
                     "Implementation-Title" to "gradle-infra-plugin"
                 )
             )
-        }
-    }
-
-    withType<Test>().configureEach {
-        useJUnitPlatform()
-        outputs.upToDateWhen { false }
-        maxParallelForks = Runtime.getRuntime().availableProcessors()
-        failFast = true // kill gradle if a test fails
-
-        testLogging {
-            events.addAll(listOf(TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED))
-            showStandardStreams = true
-            exceptionFormat = TestExceptionFormat.FULL
-        }
-    }
-}
-
-// Get the `publishing.properties` file from the `gradle/` directory
-// in the root project.
-val publishingPropsFile = file("${rootProject.projectDir}/gradle/publishing.properties")
-val publishingProps = Properties()
-
-// If the file exists, let's get the input stream
-// and load it.
-if (publishingPropsFile.exists()) {
-    publishingProps.load(publishingPropsFile.inputStream())
-} else {
-    // Check if we do in environment variables
-    val accessKey = System.getenv("NOELWARE_PUBLISHING_ACCESS_KEY") ?: ""
-    val secretKey = System.getenv("NOELWARE_PUBLISHING_SECRET_KEY") ?: ""
-
-    if (accessKey.isNotEmpty() && secretKey.isNotEmpty()) {
-        val data = """
-        |s3.accessKey=$accessKey
-        |s3.secretKey=$secretKey
-        """.trimMargin()
-
-        publishingProps.load(StringReader(data))
-    }
-}
-
-// Check if we have the `NOELWARE_PUBLISHING_ACCESS_KEY` and `NOELWARE_PUBLISHING_SECRET_KEY` environment
-// variables, and if we do, set it in the publishing.properties loader.
-val snapshotRelease: Boolean = run {
-    val env = System.getenv("NOELWARE_PUBLISHING_IS_SNAPSHOT") ?: "false"
-    env == "true"
-}
-
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier by "sources"
-    from(sourceSets.main.get().allSource)
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    group = JavaBasePlugin.DOCUMENTATION_GROUP
-    description = "Assemble Kotlin documentation with Dokka"
-
-    archiveClassifier by "javadoc"
-    from(tasks.javadoc)
-    dependsOn(tasks.javadoc)
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("infra") {
-            from(components["java"])
-
-            artifactId = "gradle-infra-plugin"
-            groupId = "org.noelware.gradle"
-            version = "$VERSION"
-
-            artifact(sourcesJar.get())
-            artifact(javadocJar.get())
-
-            pom {
-                description by "Gradle plugin to configure sane defaults for Noelware's Gradle projects"
-                name by "gradle-infra-plugin"
-                url by "https://docs.noelware.org/libraries/java/gradle-infra-plugin/$VERSION"
-
-                organization {
-                    name by "Noelware"
-                    url by "https://noelware.org"
-                }
-
-                developers {
-                    developer {
-                        name by "Noel"
-                        email by "cutie@floofy.dev"
-                        url by "https://floofy.dev"
-                    }
-
-                    developer {
-                        name by "Noelware Team"
-                        email by "team@noelware.org"
-                        url by "https://noelware.org"
-                    }
-                }
-
-                issueManagement {
-                    system by "GitHub"
-                    url by "https://github.com/Noelware/gradle-infra-plugin/issues"
-                }
-
-                licenses {
-                    license {
-                        name by "MIT License"
-                        url by "https://github.com/Noelware/gradle-infra-plugin/blob/master/LICENSE"
-                    }
-                }
-
-                scm {
-                    connection by "scm:git:ssh://github.com/Noelware/gradle-infra-plugin.git"
-                    developerConnection by "scm:git:ssh://git@github.com:Noelware/gradle-infra-plugin.git"
-                    url by "https://github.com/Noelware/gradle-infra-plugin"
-                }
-            }
-        }
-    }
-
-    repositories {
-        val url = if (snapshotRelease) "s3://august/noelware/maven/snapshots" else "s3://august/noelware/maven"
-        maven(url) {
-            credentials(AwsCredentials::class.java) {
-                accessKey = publishingProps.getProperty("s3.accessKey") ?: System.getenv("NOELWARE_PUBLISHING_ACCESS_KEY") ?: ""
-                secretKey = publishingProps.getProperty("s3.secretKey") ?: System.getenv("NOELWARE_PUBLISHING_SECRET_KEY") ?: ""
-            }
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * 🐻‍❄️🐘 gradle-infra: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * gradle-infra-plugin: 🐻‍❄️🐘 Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,32 +29,38 @@ import java.io.File;
 import java.net.URI;
 import java.util.List;
 import java.util.regex.Pattern;
+import javax.inject.Inject;
 import org.gradle.api.GradleException;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Plugin;
 import org.gradle.api.initialization.Settings;
 import org.gradle.caching.http.HttpBuildCache;
+import org.gradle.jvm.toolchain.JavaToolchainResolverRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.noelware.infra.gradle.Architecture;
 import org.noelware.infra.gradle.OperatingSystem;
+import org.noelware.infra.gradle.toolchains.NoelwareJvmToolchainResolver;
 
 /**
  * Represents a {@link Plugin<Settings>} for configuring the settings initialization for Noelware's
  * projects.
  */
+@SuppressWarnings("UnstableApiUsage")
 public class NoelwareSettingsPlugin implements Plugin<Settings> {
     private static final Pattern BOOLEAN_REGEX = Pattern.compile("^(yes|true|1|si|si*)$");
+    private final JavaToolchainResolverRegistry javaToolchainResolverRegistry;
+
+    @Inject
+    public NoelwareSettingsPlugin(JavaToolchainResolverRegistry javaToolchainResolverRegistry) {
+        this.javaToolchainResolverRegistry = javaToolchainResolverRegistry;
+    }
 
     @Override
     public void apply(@NotNull Settings settings) {
-        // Add the plugin management repositories
-        settings.getPluginManagement().repositories((repos) -> {
-            repos.gradlePluginPortal();
-            repos.mavenCentral();
-            repos.mavenLocal();
-        });
+        javaToolchainResolverRegistry.register(NoelwareJvmToolchainResolver.class);
 
         // Add the plugins that we use
+        settings.getPlugins().apply("jvm-toolchain-management");
         settings.getPluginManager().apply(GradleEnterprisePlugin.class);
 
         // Apply when all settings are evaluated

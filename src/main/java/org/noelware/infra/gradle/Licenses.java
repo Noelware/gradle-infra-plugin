@@ -1,5 +1,5 @@
 /*
- * 🐻‍❄️🐘 gradle-infra: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * gradle-infra-plugin: 🐻‍❄️🐘 Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy

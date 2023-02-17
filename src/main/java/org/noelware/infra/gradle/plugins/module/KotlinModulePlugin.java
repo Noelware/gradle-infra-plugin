@@ -1,5 +1,5 @@
 /*
- * 🐻‍❄️🐘 gradle-infra: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * gradle-infra-plugin: 🐻‍❄️🐘 Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import org.gradle.api.GradleException;
+import org.gradle.api.JavaVersion;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
@@ -54,6 +55,8 @@ public class KotlinModulePlugin implements Plugin<Project> {
                 : project.getExtensions().create("noelware", NoelwareModuleExtension.class);
 
         assert ext != null : "extension couldn't be created";
+
+        final JavaVersion javaVersion = ext.getMinimumJavaVersion().getOrElse(JavaVersion.VERSION_17);
 
         log.info("Initializing Kotlin module...");
         project.getPlugins().apply("org.jetbrains.kotlin.jvm");
@@ -97,7 +100,8 @@ public class KotlinModulePlugin implements Plugin<Project> {
 
         // Set up the Java things
         project.getExtensions().configure(JavaPluginExtension.class, (java) -> {
-            java.toolchain((toolchain) -> toolchain.getLanguageVersion().set(JavaLanguageVersion.of(17)));
+            java.toolchain((toolchain) ->
+                    toolchain.getLanguageVersion().set(JavaLanguageVersion.of(javaVersion.getMajorVersion())));
         });
 
         // Set up Kotlin compile tasks
@@ -105,7 +109,7 @@ public class KotlinModulePlugin implements Plugin<Project> {
             compiler.compilerOptions((opts) -> {
                 opts.getFreeCompilerArgs().set(List.of("-opt-in=kotlin.RequiresOptIn"));
                 opts.getJavaParameters().set(true);
-                opts.getJvmTarget().set(JvmTarget.Companion.fromTarget("17"));
+                opts.getJvmTarget().set(JvmTarget.Companion.fromTarget(javaVersion.getMajorVersion()));
             });
         });
 
@@ -117,9 +121,14 @@ public class KotlinModulePlugin implements Plugin<Project> {
                 test.setMaxParallelForks(Runtime.getRuntime().availableProcessors());
                 test.setFailFast(true);
                 test.testLogging((logging) -> {
-                    logging.events(TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED);
+                    logging.events(
+                            TestLogEvent.PASSED,
+                            TestLogEvent.FAILED,
+                            TestLogEvent.SKIPPED,
+                            TestLogEvent.STANDARD_ERROR,
+                            TestLogEvent.STANDARD_OUT,
+                            TestLogEvent.STARTED);
                     logging.setShowCauses(true);
-                    logging.setShowStandardStreams(true);
                     logging.setShowExceptions(true);
                     logging.setExceptionFormat(TestExceptionFormat.FULL);
                 });

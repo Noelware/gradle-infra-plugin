@@ -1,5 +1,5 @@
 /*
- * 🐻‍❄️🐘 gradle-infra: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * gradle-infra-plugin: 🐻‍❄️🐘 Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,9 +34,14 @@ import org.noelware.infra.gradle.OperatingSystem;
 
 /**
  * Represents Noelware's JVM toolchain resolver based off the requirements that the request
- * is giving us. This will download from the vendor's site and let Gradle do all the work
- * related to it. The settings plugin automatically uses this resolver when resolving
- * toolchains.
+ * is giving us.
+ * <p>
+ * Since Noelware only uses Eclipse Temurin distributions, we will only opt in with this one,
+ * but we do plan to update this if anyone else (except Noelware) uses it.
+ *
+ * @author Noelware (team@noelware.org)
+ * @since 17.02.23
+ * @see org.gradle.jvm.toolchain.JavaToolchainResolver
  */
 @SuppressWarnings("UnstableApiUsage")
 public abstract class NoelwareJvmToolchainResolver implements JavaToolchainResolver {

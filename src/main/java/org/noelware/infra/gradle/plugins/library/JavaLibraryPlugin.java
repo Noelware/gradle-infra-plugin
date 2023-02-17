@@ -1,5 +1,5 @@
 /*
- * 🐻‍❄️🐘 gradle-infra: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * gradle-infra-plugin: 🐻‍❄️🐘 Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -65,8 +65,8 @@ public class JavaLibraryPlugin implements Plugin<Project> {
         // in the root project.
         final File publishingPropsFile =
                 new File(project.getRootProject().getProjectDir(), "gradle/publishing.properties");
-        final Properties publishingProps = new Properties();
 
+        final Properties publishingProps = new Properties();
         if (publishingPropsFile.exists()) {
             try (final FileInputStream is = new FileInputStream(publishingPropsFile)) {
                 publishingProps.load(is);
