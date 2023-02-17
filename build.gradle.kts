@@ -41,7 +41,7 @@ val snapshotRelease: Boolean = run {
 }
 
 noelware {
-    mavenPublicationName by "infra"
+    mavenPublicationName by "gradle-infra"
     minimumJavaVersion by JAVA_VERSION
     projectDescription by "Gradle plugin to configure sane defaults for Noelware's Gradle projects"
     projectEmoji by "\uD83D\uDC3B\u200D❄️\uD83D\uDC18"
@@ -121,6 +121,59 @@ tasks {
                     "Implementation-Title" to "gradle-infra-plugin"
                 )
             )
+        }
+    }
+}
+
+publishing {
+    publications {
+        named<MavenPublication>("gradle-infra") {
+            groupId = "org.noelware.gradle"
+            artifactId = "gradle-infra-plugin"
+            version = "$VERSION"
+
+            pom {
+                description by "\uD83D\uDC3B\u200D❄️\uD83D\uDC18 Gradle plugin to configure sane defaults for Noelware's Gradle projects"
+                name by "gradle-infra-plugin"
+                url by "https://docs.noelware.org/libraries/java/gradle-infra-plugin/$VERSION"
+
+                organization {
+                    name by "Noelware, LLC."
+                    url by "https://noelware.org"
+                }
+
+                developers {
+                    developer {
+                        email by "team@noelware.org"
+                        name by "Noelware Team"
+                        url by "https://noelware.org"
+                    }
+
+                    developer {
+                        email by "cutie@floofy.dev"
+                        name by "Noel"
+                        url by "https://floofy.dev"
+                    }
+                }
+
+                licenses {
+                    license {
+                        name by "MIT License"
+                        url by Licenses.MIT.url()
+                    }
+                }
+
+                issueManagement {
+                    system by "GitHub"
+                    url by "https://github.com/Noelware/gradle-infra-plugin/issues"
+                }
+
+                scm {
+                    connection by "scm:git:ssh://github.com/Noelware/gradle-infra-plugin.git"
+                    developerConnection by "scm:git:ssh://git@github.com:Noelware/gradle-infra-plugin.git"
+                    url by "https://github.com/Noelware/gradle-infra-plugin"
+                }
+            }
         }
     }
 }

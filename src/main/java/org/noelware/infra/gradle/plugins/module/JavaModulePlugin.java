@@ -1,5 +1,5 @@
 /*
- * { Emoji }} gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * 🐻‍❄️🐘 gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,7 +36,6 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.jetbrains.annotations.NotNull;
 import org.noelware.infra.gradle.Licenses;
-import org.noelware.infra.gradle.OperatingSystem;
 
 /**
  * Represents the base plugin for configuring Java projects.
@@ -58,22 +57,19 @@ public class JavaModulePlugin implements Plugin<Project> {
             spotless.java((java) -> {
                 try {
                     java.licenseHeader(ext.getLicense()
-                                    .getOrElse(Licenses.MIT)
-                                    .getTemplate(
-                                            ext.getProjectName()
-                                                    .getOrElse(project.getRootProject()
-                                                            .getName()),
-                                            ext.getProjectDescription()
-                                                    .getOrElse(
-                                                            project.getDescription() != null
-                                                                    ? project.getDescription()
-                                                                    : "fill this out"),
-                                            ext.getCurrentYear()
-                                                    .getOrElse(String.valueOf(Calendar.getInstance()
-                                                            .get(Calendar.YEAR))),
-                                            ext.getProjectEmoji().getOrElse(""))
-                                    .trim()
-                            + (OperatingSystem.current().isUnix() ? "\n" : "\r\n"));
+                            .getOrElse(Licenses.MIT)
+                            .getTemplate(
+                                    ext.getProjectName()
+                                            .getOrElse(project.getRootProject().getName()),
+                                    ext.getProjectDescription()
+                                            .getOrElse(
+                                                    project.getDescription() != null
+                                                            ? project.getDescription()
+                                                            : "fill this out"),
+                                    ext.getCurrentYear()
+                                            .getOrElse(String.valueOf(
+                                                    Calendar.getInstance().get(Calendar.YEAR))),
+                                    ext.getProjectEmoji().getOrElse("")));
 
                     java.trimTrailingWhitespace();
                     java.removeUnusedImports();

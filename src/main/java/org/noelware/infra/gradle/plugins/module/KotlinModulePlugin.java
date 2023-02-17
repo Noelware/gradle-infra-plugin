@@ -1,5 +1,5 @@
 /*
- * { Emoji }} gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * 🐻‍❄️🐘 gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -41,7 +41,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile;
 import org.noelware.infra.gradle.Licenses;
-import org.noelware.infra.gradle.OperatingSystem;
 
 /**
  * Represents the base plugin for configuring Kotlin projects.
@@ -71,23 +70,20 @@ public class KotlinModulePlugin implements Plugin<Project> {
             spotless.kotlin((kotlin) -> {
                 try {
                     kotlin.licenseHeader(ext.getLicense()
-                                    .convention(Licenses.MIT)
-                                    .get()
-                                    .getTemplate(
-                                            ext.getProjectName()
-                                                    .getOrElse(project.getRootProject()
-                                                            .getName()),
-                                            ext.getProjectDescription()
-                                                    .getOrElse(
-                                                            project.getDescription() != null
-                                                                    ? project.getDescription()
-                                                                    : "fill this out"),
-                                            ext.getCurrentYear()
-                                                    .getOrElse(String.valueOf(Calendar.getInstance()
-                                                            .get(Calendar.YEAR))),
-                                            ext.getProjectEmoji().getOrElse(""))
-                                    .trim()
-                            + (OperatingSystem.current().isUnix() ? "\n" : "\r\n"));
+                            .convention(Licenses.MIT)
+                            .get()
+                            .getTemplate(
+                                    ext.getProjectName()
+                                            .getOrElse(project.getRootProject().getName()),
+                                    ext.getProjectDescription()
+                                            .getOrElse(
+                                                    project.getDescription() != null
+                                                            ? project.getDescription()
+                                                            : "fill this out"),
+                                    ext.getCurrentYear()
+                                            .getOrElse(String.valueOf(
+                                                    Calendar.getInstance().get(Calendar.YEAR))),
+                                    ext.getProjectEmoji().getOrElse("")));
 
                     kotlin.trimTrailingWhitespace();
                     kotlin.endWithNewline();
