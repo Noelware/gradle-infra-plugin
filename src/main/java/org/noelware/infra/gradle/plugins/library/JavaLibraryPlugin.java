@@ -106,9 +106,9 @@ public class JavaLibraryPlugin implements Plugin<Project> {
                 publications.create(project.getRootProject().getName(), MavenPublication.class, (pub) -> {
                     pub.from(project.getComponents().getByName("java"));
 
-                    pub.setGroupId((String) project.getGroup());
+                    pub.setGroupId(project.getGroup().toString());
                     pub.setArtifactId(ext.getProjectName().getOrElse(project.getName()));
-                    pub.setVersion((String) project.getVersion());
+                    pub.setVersion(project.getVersion().toString());
 
                     pub.artifact(sourcesJar.get());
                     pub.artifact(javadocJar.get());
