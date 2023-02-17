@@ -110,7 +110,7 @@ public class KotlinLibraryPlugin implements Plugin<Project> {
                 // We have most of this empty, so we let the project do that instead
                 // of the plugin.
                 publications.create(publicationName, MavenPublication.class, (pub) -> {
-                    pub.from(project.getComponents().getByName("java"));
+                    pub.from(project.getComponents().getByName("kotlin"));
 
                     pub.artifact(sourcesJar.get());
                     pub.artifact(javadocJar.get());
