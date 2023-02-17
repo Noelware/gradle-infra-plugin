@@ -23,11 +23,7 @@
 package org.noelware.infra.gradle.plugins.module;
 
 import com.diffplug.gradle.spotless.SpotlessExtension;
-
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Calendar;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
@@ -62,20 +58,22 @@ public class JavaModulePlugin implements Plugin<Project> {
             spotless.java((java) -> {
                 try {
                     java.licenseHeader(ext.getLicense()
-                            .getOrElse(Licenses.MIT)
-                            .getTemplate(
-                                    ext.getProjectName()
-                                            .getOrElse(project.getRootProject().getName()),
-                                    ext.getProjectDescription()
-                                            .getOrElse(
-                                                    project.getDescription() != null
-                                                            ? project.getDescription()
-                                                            : "fill this out"),
-                                    ext.getCurrentYear()
-                                            .getOrElse(String.valueOf(
-                                                    Calendar.getInstance().get(Calendar.YEAR))),
-                                    ext.getProjectEmoji().getOrElse(""))
-                            .trim() + (OperatingSystem.current().isUnix() ? "\n" : "\r\n"));
+                                    .getOrElse(Licenses.MIT)
+                                    .getTemplate(
+                                            ext.getProjectName()
+                                                    .getOrElse(project.getRootProject()
+                                                            .getName()),
+                                            ext.getProjectDescription()
+                                                    .getOrElse(
+                                                            project.getDescription() != null
+                                                                    ? project.getDescription()
+                                                                    : "fill this out"),
+                                            ext.getCurrentYear()
+                                                    .getOrElse(String.valueOf(Calendar.getInstance()
+                                                            .get(Calendar.YEAR))),
+                                            ext.getProjectEmoji().getOrElse(""))
+                                    .trim()
+                            + (OperatingSystem.current().isUnix() ? "\n" : "\r\n"));
 
                     java.trimTrailingWhitespace();
                     java.removeUnusedImports();

@@ -71,21 +71,23 @@ public class KotlinModulePlugin implements Plugin<Project> {
             spotless.kotlin((kotlin) -> {
                 try {
                     kotlin.licenseHeader(ext.getLicense()
-                            .convention(Licenses.MIT)
-                            .get()
-                            .getTemplate(
-                                    ext.getProjectName()
-                                            .getOrElse(project.getRootProject().getName()),
-                                    ext.getProjectDescription()
-                                            .getOrElse(
-                                                    project.getDescription() != null
-                                                            ? project.getDescription()
-                                                            : "fill this out"),
-                                    ext.getCurrentYear()
-                                            .getOrElse(String.valueOf(
-                                                    Calendar.getInstance().get(Calendar.YEAR))),
-                                    ext.getProjectEmoji().getOrElse(""))
-                            .trim() + (OperatingSystem.current().isUnix() ? "\n" : "\r\n"));
+                                    .convention(Licenses.MIT)
+                                    .get()
+                                    .getTemplate(
+                                            ext.getProjectName()
+                                                    .getOrElse(project.getRootProject()
+                                                            .getName()),
+                                            ext.getProjectDescription()
+                                                    .getOrElse(
+                                                            project.getDescription() != null
+                                                                    ? project.getDescription()
+                                                                    : "fill this out"),
+                                            ext.getCurrentYear()
+                                                    .getOrElse(String.valueOf(Calendar.getInstance()
+                                                            .get(Calendar.YEAR))),
+                                            ext.getProjectEmoji().getOrElse(""))
+                                    .trim()
+                            + (OperatingSystem.current().isUnix() ? "\n" : "\r\n"));
 
                     kotlin.trimTrailingWhitespace();
                     kotlin.endWithNewline();
