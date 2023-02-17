@@ -24,7 +24,6 @@
 package org.noelware.infra.gradle.plugins.module;
 
 import com.diffplug.gradle.spotless.SpotlessExtension;
-import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import org.gradle.api.GradleException;
@@ -58,18 +57,19 @@ public class JavaModulePlugin implements Plugin<Project> {
         project.getExtensions().configure(SpotlessExtension.class, (spotless) -> {
             spotless.java((java) -> {
                 try {
-                    java.licenseHeader(ext.getLicense().getOrElse(Licenses.MIT).getTemplate(
-                            ext.getProjectName()
-                                    .getOrElse(project.getRootProject().getName()),
-                            ext.getProjectDescription()
-                                    .getOrElse(
-                                            project.getDescription() != null
-                                                    ? project.getDescription()
-                                                    : "fill this out"),
-                            ext.getCurrentYear()
-                                    .getOrElse(String.valueOf(
-                                            Calendar.getInstance().get(Calendar.YEAR)))
-                    ));
+                    java.licenseHeader(ext.getLicense()
+                            .getOrElse(Licenses.MIT)
+                            .getTemplate(
+                                    ext.getProjectName()
+                                            .getOrElse(project.getRootProject().getName()),
+                                    ext.getProjectDescription()
+                                            .getOrElse(
+                                                    project.getDescription() != null
+                                                            ? project.getDescription()
+                                                            : "fill this out"),
+                                    ext.getCurrentYear()
+                                            .getOrElse(String.valueOf(
+                                                    Calendar.getInstance().get(Calendar.YEAR)))));
 
                     java.trimTrailingWhitespace();
                     java.removeUnusedImports();
