@@ -1,5 +1,5 @@
 /*
- * gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * { Emoji }} gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,7 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package org.noelware.infra.gradle.toolchains;
 
 import java.net.URI;

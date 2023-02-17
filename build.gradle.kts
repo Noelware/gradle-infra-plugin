@@ -30,7 +30,7 @@ plugins {
 }
 
 group = "org.noelware.gradle"
-description = "\uD83D\uDC3B\u200D❄️\uD83D\uDC18 gradle-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects"
+description = "\uD83D\uDC3B\u200D❄️\uD83D\uDC18 Gradle plugin to configure sane defaults for Noelware's Gradle projects"
 version = "$VERSION"
 
 // Check if we have the `NOELWARE_PUBLISHING_ACCESS_KEY` and `NOELWARE_PUBLISHING_SECRET_KEY` environment
@@ -41,7 +41,10 @@ val snapshotRelease: Boolean = run {
 }
 
 noelware {
+    mavenPublicationName by "infra"
+    minimumJavaVersion by JAVA_VERSION
     projectDescription by "Gradle plugin to configure sane defaults for Noelware's Gradle projects"
+    projectEmoji by "\uD83D\uDC3B\u200D❄️\uD83D\uDC18"
     projectName by "gradle-infra-plugin"
     s3BucketUrl by if (snapshotRelease) "s3://august/noelware/maven/snapshots" else "s3://august/noelware/maven"
     unitTests by true

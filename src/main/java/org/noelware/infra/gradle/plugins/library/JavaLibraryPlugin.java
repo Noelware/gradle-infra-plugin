@@ -1,5 +1,5 @@
 /*
- * gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * { Emoji }} gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,7 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package org.noelware.infra.gradle.plugins.library;
 
 import java.io.File;
@@ -40,7 +39,6 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.jvm.tasks.Jar;
 import org.jetbrains.annotations.NotNull;
-import org.noelware.infra.gradle.Licenses;
 import org.noelware.infra.gradle.plugins.module.JavaModulePlugin;
 import org.noelware.infra.gradle.plugins.module.NoelwareModuleExtension;
 
@@ -101,8 +99,9 @@ public class JavaLibraryPlugin implements Plugin<Project> {
         });
 
         final String publicationName = ext.getMavenPublicationName()
-                        .getOrElse(ext.getProjectName().getOrElse(project.getRootProject().getName()));
-        
+                .getOrElse(
+                        ext.getProjectName().getOrElse(project.getRootProject().getName()));
+
         project.getExtensions().configure(PublishingExtension.class, (publishing) -> {
             publishing.publications((publications) -> {
                 // Create the publication

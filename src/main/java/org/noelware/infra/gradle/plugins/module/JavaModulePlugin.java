@@ -1,5 +1,5 @@
 /*
- * gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * { Emoji }} gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,11 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package org.noelware.infra.gradle.plugins.module;
 
 import com.diffplug.gradle.spotless.SpotlessExtension;
+
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Calendar;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
@@ -37,6 +40,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.jetbrains.annotations.NotNull;
 import org.noelware.infra.gradle.Licenses;
+import org.noelware.infra.gradle.OperatingSystem;
 
 /**
  * Represents the base plugin for configuring Java projects.
@@ -71,7 +75,7 @@ public class JavaModulePlugin implements Plugin<Project> {
                                             .getOrElse(String.valueOf(
                                                     Calendar.getInstance().get(Calendar.YEAR))),
                                     ext.getProjectEmoji().getOrElse(""))
-                            .trim());
+                            .trim() + (OperatingSystem.current().isUnix() ? "\n" : "\r\n"));
 
                     java.trimTrailingWhitespace();
                     java.removeUnusedImports();

@@ -1,5 +1,5 @@
 /*
- * gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * { Emoji }} gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,7 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package org.noelware.infra.gradle.plugins.module;
 
 import com.diffplug.gradle.spotless.SpotlessExtension;
@@ -42,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile;
 import org.noelware.infra.gradle.Licenses;
+import org.noelware.infra.gradle.OperatingSystem;
 
 /**
  * Represents the base plugin for configuring Kotlin projects.
@@ -85,7 +85,7 @@ public class KotlinModulePlugin implements Plugin<Project> {
                                             .getOrElse(String.valueOf(
                                                     Calendar.getInstance().get(Calendar.YEAR))),
                                     ext.getProjectEmoji().getOrElse(""))
-                            .trim());
+                            .trim() + (OperatingSystem.current().isUnix() ? "\n" : "\r\n"));
 
                     kotlin.trimTrailingWhitespace();
                     kotlin.endWithNewline();
