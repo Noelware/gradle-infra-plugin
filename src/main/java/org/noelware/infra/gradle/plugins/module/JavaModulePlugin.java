@@ -56,30 +56,25 @@ public class JavaModulePlugin implements Plugin<Project> {
 
         // Configure Spotless
         project.getExtensions().configure(SpotlessExtension.class, (spotless) -> {
-            spotless.kotlin((kotlin) -> {
+            spotless.java((java) -> {
                 try {
-                    kotlin.licenseHeader(ext.getLicense()
-                            .convention(Licenses.MIT)
-                            .get()
-                            .getTemplate(
-                                    ext.getProjectName()
-                                            .getOrElse(project.getRootProject().getName()),
-                                    ext.getProjectDescription()
-                                            .getOrElse(
-                                                    project.getDescription() != null
-                                                            ? project.getDescription()
-                                                            : "fill this out"),
-                                    ext.getCurrentYear()
-                                            .getOrElse(String.valueOf(
-                                                    Calendar.getInstance().get(Calendar.YEAR)))));
+                    java.licenseHeader(ext.getLicense().getOrElse(Licenses.MIT).getTemplate(
+                            ext.getProjectName()
+                                    .getOrElse(project.getRootProject().getName()),
+                            ext.getProjectDescription()
+                                    .getOrElse(
+                                            project.getDescription() != null
+                                                    ? project.getDescription()
+                                                    : "fill this out"),
+                            ext.getCurrentYear()
+                                    .getOrElse(String.valueOf(
+                                            Calendar.getInstance().get(Calendar.YEAR)))
+                    ));
 
-                    kotlin.trimTrailingWhitespace();
-                    kotlin.endWithNewline();
-                    kotlin.encoding("UTF-8");
-                    kotlin.ktlint()
-                            .setUseExperimental(true)
-                            .setEditorConfigPath(
-                                    new File(project.getRootProject().getProjectDir(), ".editorconfig"));
+                    java.trimTrailingWhitespace();
+                    java.removeUnusedImports();
+                    java.palantirJavaFormat();
+                    java.endWithNewline();
                 } catch (IOException e) {
                     throw new GradleException("unable to generate license template", e);
                 }
