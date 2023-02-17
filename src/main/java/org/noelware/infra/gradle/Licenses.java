@@ -68,10 +68,11 @@ public enum Licenses {
      * @param name The name of the project
      * @param description The description of this project
      * @param currentYear Current year
+     * @param emoji project emoji
      * @return license heading
      * @throws IOException If we couldn't create a {@link InputStream} of the template
      */
-    public String getTemplate(String name, String description, String currentYear) throws IOException {
+    public String getTemplate(String name, String description, String currentYear, String emoji) throws IOException {
         final String tmplFile =
                 switch (this) {
                     case APACHE -> "/templates/apache.heading.tmpl";
@@ -79,10 +80,13 @@ public enum Licenses {
                 };
 
         try (final InputStream stream = Objects.requireNonNull(getClass().getResourceAsStream(tmplFile))) {
-            return new String(stream.readAllBytes())
+            String result = new String(stream.readAllBytes())
                     .replace("{{ Name }}", name)
                     .replace("{{ Description }}", description)
                     .replace("{{ CurrentYear }}", currentYear);
+
+            if (!emoji.isBlank()) result = result.replace("{{ Emoji }}", emoji);
+            return result;
         }
     }
 }

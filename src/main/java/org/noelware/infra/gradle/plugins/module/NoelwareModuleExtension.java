@@ -64,6 +64,11 @@ public abstract class NoelwareModuleExtension {
     public abstract Property<String> getProjectName();
 
     /**
+     * @return {@link Property<String>} of the project emoji for the license, defaults to none
+     */
+    public abstract Property<String> getProjectEmoji();
+
+    /**
      * @return {@link Property<Boolean>} if we should include unit tests with JUnit5
      */
     public abstract Property<Boolean> getUnitTests();

@@ -69,7 +69,9 @@ public class JavaModulePlugin implements Plugin<Project> {
                                                             : "fill this out"),
                                     ext.getCurrentYear()
                                             .getOrElse(String.valueOf(
-                                                    Calendar.getInstance().get(Calendar.YEAR)))));
+                                                    Calendar.getInstance().get(Calendar.YEAR))),
+                                    ext.getProjectEmoji().getOrElse(""))
+                            .trim());
 
                     java.trimTrailingWhitespace();
                     java.removeUnusedImports();
