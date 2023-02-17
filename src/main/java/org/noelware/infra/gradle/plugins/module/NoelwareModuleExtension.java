@@ -38,6 +38,11 @@ public abstract class NoelwareModuleExtension {
     public abstract Property<JavaVersion> getMinimumJavaVersion();
 
     /**
+     * @return {@link Property<JavaVersion>} of the publication name, defaults to the project name.
+     */
+    public abstract Property<String> getMavenPublicationName();
+
+    /**
      * @return {@link Property<String>} that represents the full S3 bucket URL for the library plugins, this isn't
      * required in the module plugins.
      */

@@ -101,13 +101,19 @@ public class KotlinLibraryPlugin implements Plugin<Project> {
             jar.dependsOn(javadocTask);
         });
 
+        final String publicationName = ext.getMavenPublicationName()
+                .getOrElse(ext.getProjectName().getOrElse(project.getRootProject().getName()));
+
         project.getExtensions().configure(PublishingExtension.class, (publishing) -> {
             publishing.publications((publications) -> {
                 // Create the publication
                 // We have most of this empty, so we let the project do that instead
                 // of the plugin.
-                publications.create(project.getRootProject().getName(), MavenPublication.class, (pub) -> {
+                publications.create(publicationName, MavenPublication.class, (pub) -> {
                     pub.from(project.getComponents().getByName("java"));
+
+                    pub.artifact(sourcesJar.get());
+                    pub.artifact(javadocJar.get());
                 });
             });
 

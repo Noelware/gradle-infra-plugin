@@ -100,55 +100,19 @@ public class JavaLibraryPlugin implements Plugin<Project> {
             jar.dependsOn(javadocTask);
         });
 
+        final String publicationName = ext.getMavenPublicationName()
+                        .getOrElse(ext.getProjectName().getOrElse(project.getRootProject().getName()));
+        
         project.getExtensions().configure(PublishingExtension.class, (publishing) -> {
             publishing.publications((publications) -> {
                 // Create the publication
-                publications.create(project.getRootProject().getName(), MavenPublication.class, (pub) -> {
+                // We have most of this empty, so we let the project do that instead
+                // of the plugin.
+                publications.create(publicationName, MavenPublication.class, (pub) -> {
                     pub.from(project.getComponents().getByName("java"));
-
-                    pub.setGroupId(project.getGroup().toString());
-                    pub.setArtifactId(ext.getProjectName().getOrElse(project.getName()));
-                    pub.setVersion(project.getVersion().toString());
 
                     pub.artifact(sourcesJar.get());
                     pub.artifact(javadocJar.get());
-
-                    pub.pom((pom) -> {
-                        pom.getDescription()
-                                .set(ext.getProjectDescription()
-                                        .getOrElse(
-                                                project.getDescription() != null
-                                                        ? project.getDescription()
-                                                        : "not filled in"));
-                        pom.getName().set(ext.getProjectName().getOrElse(project.getName()));
-
-                        pom.organization((org) -> {
-                            org.getName().set("Noelware, LLC.");
-                            org.getUrl().set("https://noelware.org");
-                        });
-
-                        pom.developers((devs) -> {
-                            devs.developer((dev) -> {
-                                dev.getOrganization().set("Noelware, LLC.");
-                                dev.getEmail().set("team@noelware.org");
-                                dev.getName().set("Noelware Team");
-                                dev.getUrl().set("https://noelware.org");
-                            });
-                        });
-
-                        pom.licenses((licenses) -> {
-                            licenses.license((license) -> {
-                                license.getName()
-                                        .set(ext.getLicense()
-                                                .getOrElse(Licenses.MIT)
-                                                .getName());
-                                license.getUrl()
-                                        .set(ext.getLicense()
-                                                .getOrElse(Licenses.MIT)
-                                                .url());
-                            });
-                        });
-                    });
                 });
             });
 
