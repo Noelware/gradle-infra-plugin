@@ -29,6 +29,7 @@ import java.io.StringReader
 import java.util.Properties
 
 plugins {
+    id("com.gradle.plugin-publish")
     id("com.diffplug.spotless")
 
     `java-gradle-plugin`
@@ -73,8 +74,6 @@ spotless {
 }
 
 gradlePlugin {
-    isAutomatedPublishing = false
-
     @Suppress("UnstableApiUsage")
     vcsUrl by "https://github.com/Noelware/gradle-infra"
 
@@ -182,7 +181,7 @@ val javadocJar by tasks.registering(Jar::class) {
 
 publishing {
     publications {
-        create<MavenPublication>("ktor") {
+        create<MavenPublication>("infra") {
             from(components["java"])
 
             artifactId = "gradle-infra-plugin"

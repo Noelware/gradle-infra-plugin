@@ -74,8 +74,8 @@ public enum Licenses {
     public String getTemplate(String name, String description, String currentYear) throws IOException {
         final String tmplFile =
                 switch (this) {
-                    case APACHE -> "/apache.heading.tmpl";
-                    case MIT -> "/mit.heading.tmpl";
+                    case APACHE -> "/templates/apache.heading.tmpl";
+                    case MIT -> "/templates/mit.heading.tmpl";
                 };
 
         try (final InputStream stream = Objects.requireNonNull(getClass().getResourceAsStream(tmplFile))) {
