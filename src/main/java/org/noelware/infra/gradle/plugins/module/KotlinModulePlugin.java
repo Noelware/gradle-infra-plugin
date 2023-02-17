@@ -42,6 +42,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile;
 import org.noelware.infra.gradle.Licenses;
 
+/**
+ * Represents the base plugin for configuring Kotlin projects.
+ */
 public class KotlinModulePlugin implements Plugin<Project> {
     @Override
     public void apply(@NotNull Project project) {

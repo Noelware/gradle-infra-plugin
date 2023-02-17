@@ -29,13 +29,14 @@ plugins {
 
 repositories {
     maven("https://maven.floofy.dev/repo/releases")
+    maven("https://maven.noelware.org")
     gradlePluginPortal()
     mavenCentral()
 }
 
 dependencies {
     implementation("com.diffplug.spotless:spotless-plugin-gradle:6.15.0")
-    implementation("com.gradle.publish:plugin-publish-plugin:1.1.0")
+    implementation("org.noelware.gradle:gradle-infra-plugin:1.0.0")
     implementation("dev.floofy.commons:gradle:2.5.0")
     implementation(kotlin("gradle-plugin", "1.8.10"))
     implementation(gradleApi())

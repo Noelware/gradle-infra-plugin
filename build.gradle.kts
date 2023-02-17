@@ -29,7 +29,6 @@ import java.io.StringReader
 import java.util.Properties
 
 plugins {
-    id("com.gradle.plugin-publish")
     id("com.diffplug.spotless")
 
     `java-gradle-plugin`
@@ -74,6 +73,8 @@ spotless {
 }
 
 gradlePlugin {
+    isAutomatedPublishing = false
+
     @Suppress("UnstableApiUsage")
     vcsUrl by "https://github.com/Noelware/gradle-infra"
 
@@ -91,12 +92,12 @@ gradlePlugin {
         }
 
         create("kotlin-library") {
-            implementationClass = "org.noelware.infra.gradle.plugins.module.KotlinLibraryPlugin"
+            implementationClass = "org.noelware.infra.gradle.plugins.library.KotlinLibraryPlugin"
             id = "org.noelware.gradle.kotlin-library"
         }
 
         create("java-library") {
-            implementationClass = "org.noelware.infra.gradle.plugins.module.JavaLibraryPlugin"
+            implementationClass = "org.noelware.infra.gradle.plugins.library.JavaLibraryPlugin"
             id = "org.noelware.gradle.java-library"
         }
 

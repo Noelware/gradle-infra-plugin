@@ -40,12 +40,17 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.jvm.tasks.Jar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.dokka.gradle.AbstractDokkaTask;
+import org.noelware.infra.gradle.plugins.module.KotlinModulePlugin;
 import org.noelware.infra.gradle.plugins.module.NoelwareModuleExtension;
 
+/**
+ * A plugin that is meant to be used with library projects. This configures the {@link KotlinModulePlugin} alongside
+ * with this, but, this should be only for projects that are Kotlin libraries.
+ */
 public class KotlinLibraryPlugin implements Plugin<Project> {
     @Override
     public void apply(@NotNull Project project) {
-        project.getPlugins().apply(KotlinLibraryPlugin.class);
+        project.getPlugins().apply(KotlinModulePlugin.class);
         project.getPlugins().apply("java-library");
         project.getPlugins().apply("maven-publish");
         project.getPlugins().apply("org.jetbrains.dokka");
@@ -108,7 +113,7 @@ public class KotlinLibraryPlugin implements Plugin<Project> {
 
             publishing.repositories((repositories) -> {
                 repositories.maven((maven) -> {
-                    maven.setUrl(ext.getS3BucketUrl().get());
+                    maven.setUrl(ext.getS3BucketUrl().getOrElse("s3://august/noelware/maven"));
                     maven.credentials(AwsCredentials.class, (creds) -> {
                         creds.setAccessKey(publishingProps.getProperty("s3.accessKey"));
                         creds.setSecretKey(publishingProps.getProperty("s3.secretKey"));

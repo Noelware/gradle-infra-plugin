@@ -39,6 +39,9 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.jetbrains.annotations.NotNull;
 import org.noelware.infra.gradle.Licenses;
 
+/**
+ * Represents the base plugin for configuring Java projects.
+ */
 public class JavaModulePlugin implements Plugin<Project> {
     @Override
     public void apply(@NotNull Project project) {

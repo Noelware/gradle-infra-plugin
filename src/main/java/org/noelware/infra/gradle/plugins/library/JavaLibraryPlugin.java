@@ -44,6 +44,10 @@ import org.noelware.infra.gradle.Licenses;
 import org.noelware.infra.gradle.plugins.module.JavaModulePlugin;
 import org.noelware.infra.gradle.plugins.module.NoelwareModuleExtension;
 
+/**
+ * A plugin that is meant to be used with library projects. This configures the {@link JavaModulePlugin} alongside
+ * with this, but, this should be only for projects that are Java libraries.
+ */
 public class JavaLibraryPlugin implements Plugin<Project> {
     @Override
     public void apply(@NotNull Project project) {
@@ -150,7 +154,7 @@ public class JavaLibraryPlugin implements Plugin<Project> {
 
             publishing.repositories((repositories) -> {
                 repositories.maven((maven) -> {
-                    maven.setUrl(ext.getS3BucketUrl().get());
+                    maven.setUrl(ext.getS3BucketUrl().getOrElse("s3://august/noelware/maven"));
                     maven.credentials(AwsCredentials.class, (creds) -> {
                         creds.setAccessKey(publishingProps.getProperty("s3.accessKey"));
                         creds.setSecretKey(publishingProps.getProperty("s3.secretKey"));
