@@ -17,26 +17,25 @@ This plugin comes with multiple plugins that suite what we are trying to build:
 
 ```kotlin
 buildscript {
-  repositories {
-    maven("https://maven.noelware.org")
-    gradlePluginPortal()
-    mavenCentral()
-  }
+    repositories {
+        maven("https://maven.noelware.org")
+        gradlePluginPortal()
+        mavenCentral()
+    }
   
-  dependencies {
-    classpath("org.noelware.gradle:infra-gradle-plugin:1.0.0")
-  }
+    dependencies { 
+        classpath("org.noelware.gradle:infra-gradle-plugin:1.0.0") 
+    }
 }
 
-plugins {
-  id("org.noelware.gradle") version "1.0.0"
+plugins { 
+    id("org.noelware.gradle.kotlin") version "1.0.0"
 }
 
 noelware {
-  configureKotlinProject {
-    license = org.noelware.gradle.infra.Licenses.APACHE_2_0
-    year    = 2023 // year that this project was created
-  }
+    license.set(org.noelware.infra.gradle.Licenses.MIT)
+    currentYear.set("2022-2023")
+    projectName.set("my project name")
 }
 ```
 
