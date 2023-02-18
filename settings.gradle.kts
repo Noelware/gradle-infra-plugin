@@ -46,7 +46,7 @@ buildscript {
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver") version "0.4.0"
-    id("org.noelware.gradle.settings") version "1.1.1"
+    id("org.noelware.gradle.settings") version "1.2.0"
     id("com.gradle.enterprise") version "3.12.3"
 }
 
