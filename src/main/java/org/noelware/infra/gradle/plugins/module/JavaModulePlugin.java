@@ -95,7 +95,14 @@ public class JavaModulePlugin implements Plugin<Project> {
                 test.setMaxParallelForks(Runtime.getRuntime().availableProcessors());
                 test.setFailFast(true);
                 test.testLogging((logging) -> {
-                    logging.events(TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED);
+                    logging.events(
+                            TestLogEvent.PASSED,
+                            TestLogEvent.FAILED,
+                            TestLogEvent.SKIPPED,
+                            TestLogEvent.STANDARD_ERROR,
+                            TestLogEvent.STANDARD_OUT,
+                            TestLogEvent.STARTED);
+
                     logging.setShowCauses(true);
                     logging.setShowStandardStreams(true);
                     logging.setShowExceptions(true);

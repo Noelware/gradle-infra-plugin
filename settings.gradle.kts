@@ -23,6 +23,9 @@
 
 @file:Suppress("UnstableApiUsage")
 
+import org.gradle.toolchains.foojay.FoojayToolchainResolver
+import org.noelware.infra.gradle.toolchains.NoelwareJvmToolchainResolver
+
 rootProject.name = "gradle-infra"
 
 pluginManagement {
@@ -50,8 +53,8 @@ plugins {
 toolchainManagement {
     jvm {
         javaRepositories {
-            repository("foojay") {
-                resolverClass.set(org.gradle.toolchains.foojay.FoojayToolchainResolver::class.java)
+            repository("noelware") {
+                resolverClass.set(NoelwareJvmToolchainResolver::class.java)
             }
         }
     }

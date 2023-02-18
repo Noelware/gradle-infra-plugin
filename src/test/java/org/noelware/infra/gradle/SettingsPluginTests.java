@@ -110,7 +110,7 @@ public class SettingsPluginTests {
                 .build());
     }
 
-    private void writeFile(File file, String content) throws IOException {
+    public static void writeFile(File file, String content) throws IOException {
         try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(content);
         }

@@ -29,17 +29,14 @@ import java.io.File;
 import java.net.URI;
 import java.util.List;
 import java.util.regex.Pattern;
-import javax.inject.Inject;
 import org.gradle.api.GradleException;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Plugin;
 import org.gradle.api.initialization.Settings;
 import org.gradle.caching.http.HttpBuildCache;
-import org.gradle.jvm.toolchain.JavaToolchainResolverRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.noelware.infra.gradle.Architecture;
 import org.noelware.infra.gradle.OperatingSystem;
-import org.noelware.infra.gradle.toolchains.NoelwareJvmToolchainResolver;
 
 /**
  * Represents a {@link Plugin<Settings>} for configuring the settings initialization for Noelware's
@@ -48,17 +45,9 @@ import org.noelware.infra.gradle.toolchains.NoelwareJvmToolchainResolver;
 @SuppressWarnings("UnstableApiUsage")
 public class NoelwareSettingsPlugin implements Plugin<Settings> {
     private static final Pattern BOOLEAN_REGEX = Pattern.compile("^(yes|true|1|si|si*)$");
-    private final JavaToolchainResolverRegistry javaToolchainResolverRegistry;
-
-    @Inject
-    public NoelwareSettingsPlugin(JavaToolchainResolverRegistry javaToolchainResolverRegistry) {
-        this.javaToolchainResolverRegistry = javaToolchainResolverRegistry;
-    }
 
     @Override
     public void apply(@NotNull Settings settings) {
-        javaToolchainResolverRegistry.register(NoelwareJvmToolchainResolver.class);
-
         // Add the plugins that we use
         settings.getPlugins().apply("jvm-toolchain-management");
         settings.getPluginManager().apply(GradleEnterprisePlugin.class);

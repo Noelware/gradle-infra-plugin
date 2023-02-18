@@ -129,6 +129,7 @@ public class KotlinModulePlugin implements Plugin<Project> {
                             TestLogEvent.STANDARD_ERROR,
                             TestLogEvent.STANDARD_OUT,
                             TestLogEvent.STARTED);
+
                     logging.setShowCauses(true);
                     logging.setShowExceptions(true);
                     logging.setExceptionFormat(TestExceptionFormat.FULL);
