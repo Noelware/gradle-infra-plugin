@@ -74,25 +74,12 @@ public class SettingsPluginTests {
         writeFile(
                 settingsKtsFile,
                 """
-        import org.noelware.infra.gradle.toolchains.NoelwareJvmToolchainResolver
-
         plugins {
             id("org.noelware.gradle.settings")
-            `jvm-toolchain-management`
         }
 
         logger.lifecycle("hi")
-
         rootProject.name = "test"
-        toolchainManagement {
-            jvm {
-                javaRepositories {
-                    repository("noelware") {
-                        resolverClass.set(NoelwareJvmToolchainResolver::class.java)
-                    }
-                }
-            }
-        }
         """);
 
         assertDoesNotThrow(() -> GradleRunner.create()

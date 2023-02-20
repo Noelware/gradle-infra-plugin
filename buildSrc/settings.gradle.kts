@@ -1,5 +1,5 @@
 /*
- * 🐻‍❄️🐘 gradle-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * 🐻‍❄️🐘 gradle-infra: Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,10 +21,12 @@
  * SOFTWARE.
  */
 
-package org.noelware.infra.gradle
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
 
-import org.gradle.api.JavaVersion
-import dev.floofy.utils.gradle.*
-
-val VERSION = Version(1, 3, 0, showPatchNumber = true)
-val JAVA_VERSION = JavaVersion.VERSION_17
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0"
+}

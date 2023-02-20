@@ -21,11 +21,6 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UnstableApiUsage")
-
-import org.gradle.toolchains.foojay.FoojayToolchainResolver
-import org.noelware.infra.gradle.toolchains.NoelwareJvmToolchainResolver
-
 rootProject.name = "gradle-infra"
 
 pluginManagement {
@@ -40,22 +35,11 @@ pluginManagement {
 
 buildscript {
     dependencies {
-        classpath("org.noelware.gradle:gradle-infra:1.1.1")
+        classpath("org.noelware.gradle:gradle-infra-plugin:1.2.0")
     }
 }
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver") version "0.4.0"
-    id("org.noelware.gradle.settings") version "1.1.1"
+    id("org.noelware.gradle.settings") version "1.2.0"
     id("com.gradle.enterprise") version "3.12.3"
-}
-
-toolchainManagement {
-    jvm {
-        javaRepositories {
-            repository("noelware") {
-                resolverClass.set(NoelwareJvmToolchainResolver::class.java)
-            }
-        }
-    }
 }

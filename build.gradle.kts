@@ -21,6 +21,8 @@
  * SOFTWARE.
  */
 
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.noelware.infra.gradle.*
 import dev.floofy.utils.gradle.*
 
@@ -122,6 +124,29 @@ tasks {
                     "Implementation-Title" to "gradle-infra-plugin"
                 )
             )
+        }
+    }
+
+    withType<Test>().configureEach {
+        useJUnitPlatform()
+        outputs.upToDateWhen { false }
+
+        maxParallelForks = Runtime.getRuntime().availableProcessors()
+        failFast = true
+        testLogging {
+            events(
+                TestLogEvent.PASSED,
+                TestLogEvent.FAILED,
+                TestLogEvent.SKIPPED,
+                TestLogEvent.STANDARD_ERROR,
+                TestLogEvent.STANDARD_OUT,
+                TestLogEvent.STARTED
+            )
+
+            exceptionFormat = TestExceptionFormat.FULL
+            showStackTraces = true
+            showExceptions = true
+            showCauses = true
         }
     }
 }

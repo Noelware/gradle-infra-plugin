@@ -29,7 +29,6 @@ import java.util.Calendar;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.logging.Logger;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.testing.Test;
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat;
@@ -44,12 +43,10 @@ import org.noelware.infra.gradle.Licenses;
 public class JavaModulePlugin implements Plugin<Project> {
     @Override
     public void apply(@NotNull Project project) {
-        final Logger log = project.getLogger();
         final NoelwareModuleExtension ext = project.getExtensions().findByType(NoelwareModuleExtension.class) != null
                 ? project.getExtensions().findByType(NoelwareModuleExtension.class)
                 : project.getExtensions().create("noelware", NoelwareModuleExtension.class);
 
-        log.info("Initializing Java module...");
         project.getPlugins().apply("java");
         project.getPlugins().apply("com.diffplug.spotless");
 
@@ -88,27 +85,25 @@ public class JavaModulePlugin implements Plugin<Project> {
         });
 
         // configure junit tests if needed
-        if (ext.getUnitTests().getOrElse(false)) {
-            project.getTasks().withType(Test.class).configureEach((test) -> {
-                test.useJUnitPlatform();
-                test.getOutputs().upToDateWhen((a) -> false);
-                test.setMaxParallelForks(Runtime.getRuntime().availableProcessors());
-                test.setFailFast(true);
-                test.testLogging((logging) -> {
-                    logging.events(
-                            TestLogEvent.PASSED,
-                            TestLogEvent.FAILED,
-                            TestLogEvent.SKIPPED,
-                            TestLogEvent.STANDARD_ERROR,
-                            TestLogEvent.STANDARD_OUT,
-                            TestLogEvent.STARTED);
+        project.getTasks().withType(Test.class).configureEach((test) -> {
+            test.useJUnitPlatform();
+            test.getOutputs().upToDateWhen((a) -> false);
+            test.setMaxParallelForks(Runtime.getRuntime().availableProcessors());
+            test.setFailFast(true);
+            test.testLogging((logging) -> {
+                logging.events(
+                        TestLogEvent.PASSED,
+                        TestLogEvent.FAILED,
+                        TestLogEvent.SKIPPED,
+                        TestLogEvent.STANDARD_ERROR,
+                        TestLogEvent.STANDARD_OUT,
+                        TestLogEvent.STARTED);
 
-                    logging.setShowCauses(true);
-                    logging.setShowStandardStreams(true);
-                    logging.setShowExceptions(true);
-                    logging.setExceptionFormat(TestExceptionFormat.FULL);
-                });
+                logging.setShowCauses(true);
+                logging.setShowStandardStreams(true);
+                logging.setShowExceptions(true);
+                logging.setExceptionFormat(TestExceptionFormat.FULL);
             });
-        }
+        });
     }
 }

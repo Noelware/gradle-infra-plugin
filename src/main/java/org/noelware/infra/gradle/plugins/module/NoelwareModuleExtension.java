@@ -75,6 +75,8 @@ public abstract class NoelwareModuleExtension {
 
     /**
      * @return {@link Property<Boolean>} if we should include unit tests with JUnit5
+     * @deprecated Tests are automatically configured with JUnit5, so this doesn't do anything.
      */
+    @Deprecated(since = "1.3.0", forRemoval = true)
     public abstract Property<Boolean> getUnitTests();
 }

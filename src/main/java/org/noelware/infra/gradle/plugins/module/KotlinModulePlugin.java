@@ -28,11 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
-import org.gradle.api.GradleException;
-import org.gradle.api.JavaVersion;
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
-import org.gradle.api.logging.Logger;
+import org.gradle.api.*;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.testing.Test;
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat;
@@ -49,7 +45,6 @@ import org.noelware.infra.gradle.Licenses;
 public class KotlinModulePlugin implements Plugin<Project> {
     @Override
     public void apply(@NotNull Project project) {
-        final Logger log = project.getLogger();
         final NoelwareModuleExtension ext = project.getExtensions().findByType(NoelwareModuleExtension.class) != null
                 ? project.getExtensions().findByType(NoelwareModuleExtension.class)
                 : project.getExtensions().create("noelware", NoelwareModuleExtension.class);
@@ -57,44 +52,61 @@ public class KotlinModulePlugin implements Plugin<Project> {
         assert ext != null : "extension couldn't be created";
 
         final JavaVersion javaVersion = ext.getMinimumJavaVersion().getOrElse(JavaVersion.VERSION_17);
-
-        log.info("Initializing Kotlin module...");
-        project.getPlugins().apply("org.jetbrains.kotlin.jvm");
         project.getPlugins().apply("com.diffplug.spotless");
-
-        if (project.getPlugins().hasPlugin("org.jetbrains.kotlin.plugin.serialization")) {
-            project.getPlugins().apply("org.jetbrains.kotlin.plugin.serialization");
-        }
+        project.getPlugins().apply("org.jetbrains.kotlin.jvm");
 
         // Configure Spotless
         project.getExtensions().configure(SpotlessExtension.class, (spotless) -> {
-            spotless.kotlin((kotlin) -> {
-                try {
-                    kotlin.licenseHeader(ext.getLicense()
-                            .convention(Licenses.MIT)
-                            .get()
-                            .getTemplate(
-                                    ext.getProjectName()
-                                            .getOrElse(project.getRootProject().getName()),
-                                    ext.getProjectDescription()
-                                            .getOrElse(
-                                                    project.getDescription() != null
-                                                            ? project.getDescription()
-                                                            : "fill this out"),
-                                    ext.getCurrentYear()
-                                            .getOrElse(String.valueOf(
-                                                    Calendar.getInstance().get(Calendar.YEAR))),
-                                    ext.getProjectEmoji().getOrElse("")));
+            String license;
+            try {
+                license = ext.getLicense()
+                        .convention(Licenses.MIT)
+                        .get()
+                        .getTemplate(
+                                ext.getProjectName()
+                                        .getOrElse(project.getRootProject().getName()),
+                                ext.getProjectDescription()
+                                        .getOrElse(
+                                                project.getDescription() != null
+                                                        ? project.getDescription()
+                                                        : "fill this out"),
+                                ext.getCurrentYear()
+                                        .getOrElse(String.valueOf(
+                                                Calendar.getInstance().get(Calendar.YEAR))),
+                                ext.getProjectEmoji().getOrElse(""));
+            } catch (IOException e) {
+                throw new GradleException("Unable to generate license", e);
+            }
 
-                    kotlin.trimTrailingWhitespace();
-                    kotlin.endWithNewline();
-                    kotlin.encoding("UTF-8");
+            spotless.kotlin(kotlin -> {
+                kotlin.licenseHeader(license);
+                kotlin.endWithNewline();
+                kotlin.encoding("UTF-8");
+                kotlin.target("**/*.kt");
+
+                try {
                     kotlin.ktlint()
                             .setUseExperimental(true)
                             .setEditorConfigPath(
                                     new File(project.getRootProject().getProjectDir(), ".editorconfig"));
                 } catch (IOException e) {
-                    throw new GradleException("unable to generate license template", e);
+                    throw new GradleException("Unable to apply Ktlint to Spotless", e);
+                }
+            });
+
+            spotless.kotlinGradle(kotlin -> {
+                kotlin.licenseHeader(license, "(@file|import |pluginManagement|plugins)");
+                kotlin.endWithNewline();
+                kotlin.encoding("UTF-8");
+                kotlin.target("**/*.gradle.kts");
+
+                try {
+                    kotlin.ktlint()
+                            .setUseExperimental(true)
+                            .setEditorConfigPath(
+                                    new File(project.getRootProject().getProjectDir(), ".editorconfig"));
+                } catch (IOException e) {
+                    throw new GradleException("Unable to apply Ktlint to Spotless", e);
                 }
             });
         });
@@ -115,26 +127,24 @@ public class KotlinModulePlugin implements Plugin<Project> {
         });
 
         // configure junit tests if needed
-        if (ext.getUnitTests().getOrElse(false)) {
-            project.getTasks().withType(Test.class).configureEach((test) -> {
-                test.useJUnitPlatform();
-                test.getOutputs().upToDateWhen((a) -> false);
-                test.setMaxParallelForks(Runtime.getRuntime().availableProcessors());
-                test.setFailFast(true);
-                test.testLogging((logging) -> {
-                    logging.events(
-                            TestLogEvent.PASSED,
-                            TestLogEvent.FAILED,
-                            TestLogEvent.SKIPPED,
-                            TestLogEvent.STANDARD_ERROR,
-                            TestLogEvent.STANDARD_OUT,
-                            TestLogEvent.STARTED);
+        project.getTasks().withType(Test.class).configureEach((test) -> {
+            test.useJUnitPlatform();
+            test.getOutputs().upToDateWhen((a) -> false);
+            test.setMaxParallelForks(Runtime.getRuntime().availableProcessors());
+            test.setFailFast(true);
+            test.testLogging((logging) -> {
+                logging.events(
+                        TestLogEvent.PASSED,
+                        TestLogEvent.FAILED,
+                        TestLogEvent.SKIPPED,
+                        TestLogEvent.STANDARD_ERROR,
+                        TestLogEvent.STANDARD_OUT,
+                        TestLogEvent.STARTED);
 
-                    logging.setShowCauses(true);
-                    logging.setShowExceptions(true);
-                    logging.setExceptionFormat(TestExceptionFormat.FULL);
-                });
+                logging.setShowCauses(true);
+                logging.setShowExceptions(true);
+                logging.setExceptionFormat(TestExceptionFormat.FULL);
             });
-        }
+        });
     }
 }
