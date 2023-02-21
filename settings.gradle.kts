@@ -40,6 +40,6 @@ buildscript {
 }
 
 plugins {
-    id("org.noelware.gradle.settings") version "1.2.0"
+    id("org.noelware.gradle.settings") version "1.3.0"
     id("com.gradle.enterprise") version "3.12.3"
 }
