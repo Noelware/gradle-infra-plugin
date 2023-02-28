@@ -56,6 +56,9 @@ public class KotlinModulePlugin implements Plugin<Project> {
         project.getPlugins().apply("org.jetbrains.kotlin.jvm");
 
         // Configure Spotless
+
+        // move licenseHeader/licenseHeaderFile to the bottom
+        // https://github.com/diffplug/spotless/issues/1599
         project.getExtensions().configure(SpotlessExtension.class, (spotless) -> {
             String license;
             try {
@@ -79,7 +82,6 @@ public class KotlinModulePlugin implements Plugin<Project> {
             }
 
             spotless.kotlin(kotlin -> {
-                kotlin.licenseHeader(license);
                 kotlin.endWithNewline();
                 kotlin.encoding("UTF-8");
                 kotlin.target("**/*.kt");
@@ -92,10 +94,13 @@ public class KotlinModulePlugin implements Plugin<Project> {
                 } catch (IOException e) {
                     throw new GradleException("Unable to apply Ktlint to Spotless", e);
                 }
+
+                kotlin.licenseHeader(license);
             });
 
+            // move licenseHeader/licenseHeaderFile to the bottom
+            // https://github.com/diffplug/spotless/issues/1599
             spotless.kotlinGradle(kotlin -> {
-                kotlin.licenseHeader(license, "(@file|import |pluginManagement|plugins)");
                 kotlin.endWithNewline();
                 kotlin.encoding("UTF-8");
                 kotlin.target("**/*.gradle.kts");
@@ -108,6 +113,8 @@ public class KotlinModulePlugin implements Plugin<Project> {
                 } catch (IOException e) {
                     throw new GradleException("Unable to apply Ktlint to Spotless", e);
                 }
+
+                kotlin.licenseHeader(license);
             });
         });
 
