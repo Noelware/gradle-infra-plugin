@@ -72,11 +72,4 @@ public abstract class NoelwareModuleExtension {
      * @return {@link Property<String>} of the project emoji for the license, defaults to none
      */
     public abstract Property<String> getProjectEmoji();
-
-    /**
-     * @return {@link Property<Boolean>} if we should include unit tests with JUnit5
-     * @deprecated Tests are automatically configured with JUnit5, so this doesn't do anything.
-     */
-    @Deprecated(since = "1.3.0", forRemoval = true)
-    public abstract Property<Boolean> getUnitTests();
 }

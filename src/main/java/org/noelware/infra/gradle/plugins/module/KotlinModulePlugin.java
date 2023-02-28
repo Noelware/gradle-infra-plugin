@@ -114,7 +114,7 @@ public class KotlinModulePlugin implements Plugin<Project> {
                     throw new GradleException("Unable to apply Ktlint to Spotless", e);
                 }
 
-                kotlin.licenseHeader(license);
+                kotlin.licenseHeader(license, "(package |@file|import |pluginManagement|plugins)");
             });
         });
 

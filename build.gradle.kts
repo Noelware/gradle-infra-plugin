@@ -49,7 +49,6 @@ noelware {
     projectEmoji by "\uD83D\uDC3B\u200D❄️\uD83D\uDC18"
     projectName by "gradle-infra-plugin"
     s3BucketUrl by if (snapshotRelease) "s3://august/noelware/maven/snapshots" else "s3://august/noelware/maven"
-    unitTests by true
     license by Licenses.MIT
 }
 
