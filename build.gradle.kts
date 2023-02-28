@@ -61,7 +61,7 @@ repositories {
 
 dependencies {
     implementation("com.gradle.enterprise:com.gradle.enterprise.gradle.plugin:3.12.3")
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.15.0")
+    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.16.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
     implementation("dev.floofy.commons:gradle:2.5.0")
