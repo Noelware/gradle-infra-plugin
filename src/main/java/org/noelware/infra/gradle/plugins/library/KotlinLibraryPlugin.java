@@ -23,19 +23,9 @@
 
 package org.noelware.infra.gradle.plugins.library;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
-import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.credentials.AwsCredentials;
 import org.gradle.api.plugins.JavaBasePlugin;
-import org.gradle.api.publish.PublishingExtension;
-import org.gradle.api.publish.maven.MavenPublication;
-import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.jvm.tasks.Jar;
 import org.jetbrains.annotations.NotNull;
@@ -60,36 +50,6 @@ public class KotlinLibraryPlugin implements Plugin<Project> {
                 : project.getExtensions().create("noelware", NoelwareModuleExtension.class);
 
         assert ext != null : "extension couldn't be created";
-
-        // Get the `publishing.properties` file from the `gradle/` directory
-        // in the root project.
-        final File publishingPropsFile =
-                new File(project.getRootProject().getProjectDir(), "gradle/publishing.properties");
-        final Properties publishingProps = new Properties();
-
-        if (publishingPropsFile.exists()) {
-            try (final FileInputStream is = new FileInputStream(publishingPropsFile)) {
-                publishingProps.load(is);
-            } catch (IOException e) {
-                throw new GradleException("received i/o exception when creating publishing.properties container", e);
-            }
-        } else {
-            final String accessKeyId = System.getenv("NOELWARE_PUBLISHING_ACCESS_KEY");
-            final String secretAccessKey = System.getenv("NOELWARE_PUBLISHING_SECRET_KEY");
-
-            if ((accessKeyId != null && !accessKeyId.isBlank())
-                    && (secretAccessKey != null && !secretAccessKey.isBlank())) {
-                publishingProps.setProperty("s3.accessKey", accessKeyId);
-                publishingProps.setProperty("s3.secretKey", secretAccessKey);
-            }
-        }
-
-        final SourceSetContainer sourceSets = project.getExtensions().getByType(SourceSetContainer.class);
-        final TaskProvider<Jar> sourcesJar = project.getTasks().register("sourcesJar", Jar.class, (jar) -> {
-            jar.getArchiveClassifier().set("sources");
-            jar.from(sourceSets.named("main", SourceSet.class).get().getAllSource());
-        });
-
         final TaskProvider<Jar> javadocJar = project.getTasks().register("dokkaJar", Jar.class, (jar) -> {
             final AbstractDokkaTask javadocTask =
                     (AbstractDokkaTask) project.getTasks().getByName("dokkaHtml");
@@ -101,32 +61,6 @@ public class KotlinLibraryPlugin implements Plugin<Project> {
             jar.dependsOn(javadocTask);
         });
 
-        final String publicationName = ext.getMavenPublicationName()
-                .getOrElse(
-                        ext.getProjectName().getOrElse(project.getRootProject().getName()));
-
-        project.getExtensions().configure(PublishingExtension.class, (publishing) -> {
-            publishing.publications((publications) -> {
-                // Create the publication
-                // We have most of this empty, so we let the project do that instead
-                // of the plugin.
-                publications.create(publicationName, MavenPublication.class, (pub) -> {
-                    pub.from(project.getComponents().getByName("kotlin"));
-
-                    pub.artifact(sourcesJar.get());
-                    pub.artifact(javadocJar.get());
-                });
-            });
-
-            publishing.repositories((repositories) -> {
-                repositories.maven((maven) -> {
-                    maven.setUrl(ext.getS3BucketUrl().getOrElse("s3://august/noelware/maven"));
-                    maven.credentials(AwsCredentials.class, (creds) -> {
-                        creds.setAccessKey(publishingProps.getProperty("s3.accessKey"));
-                        creds.setSecretKey(publishingProps.getProperty("s3.secretKey"));
-                    });
-                });
-            });
-        });
+        LibraryUtils.configurePublishing(project, "kotlin", javadocJar, ext);
     }
 }

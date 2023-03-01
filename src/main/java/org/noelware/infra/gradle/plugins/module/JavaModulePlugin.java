@@ -27,6 +27,7 @@ import com.diffplug.gradle.spotless.SpotlessExtension;
 import java.io.IOException;
 import java.util.Calendar;
 import org.gradle.api.GradleException;
+import org.gradle.api.JavaVersion;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -81,7 +82,11 @@ public class JavaModulePlugin implements Plugin<Project> {
 
         // Set up the Java things
         project.getExtensions().configure(JavaPluginExtension.class, (java) -> {
-            java.toolchain((toolchain) -> toolchain.getLanguageVersion().set(JavaLanguageVersion.of(17)));
+            java.toolchain((toolchain) -> toolchain
+                    .getLanguageVersion()
+                    .set(JavaLanguageVersion.of(ext.getMinimumJavaVersion()
+                            .getOrElse(JavaVersion.VERSION_17)
+                            .getMajorVersion())));
         });
 
         // configure junit tests if needed
