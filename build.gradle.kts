@@ -154,8 +154,7 @@ tasks {
 
 publishing {
     publications {
-        println(asMap)
-        named<MavenPublication>("gradle-infra") {
+        named<MavenPublication>("gradle-infra-plugin") {
             groupId = "org.noelware.gradle"
             artifactId = "gradle-infra-plugin"
             version = "$VERSION"
