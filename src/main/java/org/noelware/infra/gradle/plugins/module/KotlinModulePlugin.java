@@ -26,7 +26,6 @@ package org.noelware.infra.gradle.plugins.module;
 import com.diffplug.gradle.spotless.SpotlessExtension;
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.List;
 import org.gradle.api.*;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -43,6 +42,7 @@ import org.noelware.infra.gradle.Licenses;
  * Represents the base plugin for configuring Kotlin projects.
  */
 public class KotlinModulePlugin implements Plugin<Project> {
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public void apply(@NotNull Project project) {
         final NoelwareModuleExtension ext = project.getExtensions().findByType(NoelwareModuleExtension.class) != null
@@ -60,41 +60,22 @@ public class KotlinModulePlugin implements Plugin<Project> {
         // move licenseHeader/licenseHeaderFile to the bottom
         // https://github.com/diffplug/spotless/issues/1599
         project.getExtensions().configure(SpotlessExtension.class, (spotless) -> {
-            String license;
-            try {
-                license = ext.getLicense()
-                        .convention(Licenses.MIT)
-                        .get()
-                        .getTemplate(
-                                ext.getProjectName()
-                                        .getOrElse(project.getRootProject().getName()),
-                                ext.getProjectDescription()
-                                        .getOrElse(
-                                                project.getDescription() != null
-                                                        ? project.getDescription()
-                                                        : "fill this out"),
-                                ext.getCurrentYear()
-                                        .getOrElse(String.valueOf(
-                                                Calendar.getInstance().get(Calendar.YEAR))),
-                                ext.getProjectEmoji().getOrElse(""));
-            } catch (IOException e) {
-                throw new GradleException("Unable to generate license", e);
-            }
-
             spotless.kotlin(kotlin -> {
                 kotlin.endWithNewline();
                 kotlin.encoding("UTF-8");
                 kotlin.target("**/*.kt");
 
                 try {
-                    kotlin.ktlint()
-                            .setUseExperimental(true)
-                            .setEditorConfigPath(
-                                    new File(project.getRootProject().getProjectDir(), ".editorconfig"));
+                    final var ktlint = kotlin.ktlint().setUseExperimental(true);
+                    if (new File(project.getRootProject().getProjectDir(), ".editorconfig").exists()) {
+                        ktlint.setEditorConfigPath(
+                                new File(project.getRootProject().getProjectDir(), ".editorconfig"));
+                    }
                 } catch (IOException e) {
                     throw new GradleException("Unable to apply Ktlint to Spotless", e);
                 }
 
+                final String license = ext.getLicense().getOrElse(Licenses.MIT).render(project, ext);
                 kotlin.licenseHeader(license);
             });
 
@@ -106,15 +87,17 @@ public class KotlinModulePlugin implements Plugin<Project> {
                 kotlin.target("**/*.gradle.kts");
 
                 try {
-                    kotlin.ktlint()
-                            .setUseExperimental(true)
-                            .setEditorConfigPath(
-                                    new File(project.getRootProject().getProjectDir(), ".editorconfig"));
+                    final var ktlint = kotlin.ktlint().setUseExperimental(true);
+                    if (new File(project.getRootProject().getProjectDir(), ".editorconfig").exists()) {
+                        ktlint.setEditorConfigPath(
+                                new File(project.getRootProject().getProjectDir(), ".editorconfig"));
+                    }
                 } catch (IOException e) {
                     throw new GradleException("Unable to apply Ktlint to Spotless", e);
                 }
 
-                kotlin.licenseHeader(license, "(package |@file|import |pluginManagement|plugins)");
+                final String license = ext.getLicense().getOrElse(Licenses.MIT).render(project, ext);
+                kotlin.licenseHeader(license, "(package |@file|import |pluginManagement|plugins|rootProject.name)");
             });
         });
 

@@ -25,7 +25,13 @@ package org.noelware.infra.gradle;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.Objects;
+import org.gradle.api.GradleException;
+import org.gradle.api.Project;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.noelware.infra.gradle.plugins.module.NoelwareModuleExtension;
 
 /**
  * Represents the available license templates
@@ -64,6 +70,31 @@ public enum Licenses {
     }
 
     /**
+     * Generate and render a license heading
+     * @param extension The extension metadata
+     * @return license heading
+     */
+    @ApiStatus.Internal
+    public String render(@NotNull Project project, @NotNull NoelwareModuleExtension ext) {
+        try {
+            final String projectName = ext.getProjectName()
+                    .convention(project.getRootProject().getName())
+                    .get();
+            final String projectDesc = ext.getProjectDescription()
+                    .convention(project.getDescription() != null ? project.getDescription() : "A dummy project!")
+                    .get();
+            final String projectEmoji = ext.getProjectEmoji().convention("").get();
+            final String currentYear = ext.getCurrentYear()
+                    .convention(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)))
+                    .get();
+
+            return getTemplate(projectName, projectDesc, currentYear, projectEmoji);
+        } catch (IOException e) {
+            throw new GradleException("Unable to generate license", e);
+        }
+    }
+
+    /**
      * Generates a license heading.
      * @param name The name of the project
      * @param description The description of this project
@@ -86,6 +117,8 @@ public enum Licenses {
                     .replace("{{ CurrentYear }}", currentYear);
 
             if (!emoji.isBlank()) result = result.replace("{{ Emoji }}", emoji);
+            else result = result.replace("{{ Emoji }} ", "");
+
             return result;
         }
     }

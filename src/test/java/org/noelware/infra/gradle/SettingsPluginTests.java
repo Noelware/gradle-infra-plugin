@@ -23,16 +23,15 @@
 
 package org.noelware.infra.gradle;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.noelware.infra.gradle.utils.FileUtils;
 
 public class SettingsPluginTests {
     @TempDir
@@ -49,7 +48,7 @@ public class SettingsPluginTests {
 
     @Test
     public void test_settingsPlugin() throws IOException {
-        writeFile(
+        FileUtils.writeFile(
                 settingsFile,
                 """
         plugins {
@@ -71,7 +70,7 @@ public class SettingsPluginTests {
     @Test
     public void test_settingsPluginKotlin() throws IOException {
         settingsFile.delete();
-        writeFile(
+        FileUtils.writeFile(
                 settingsKtsFile,
                 """
         plugins {
@@ -95,11 +94,5 @@ public class SettingsPluginTests {
                 .withProjectDir(testProjectDir)
                 .withPluginClasspath()
                 .build());
-    }
-
-    public static void writeFile(File file, String content) throws IOException {
-        try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(content);
-        }
     }
 }

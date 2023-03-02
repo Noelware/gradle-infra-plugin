@@ -24,8 +24,8 @@
 package org.noelware.infra.gradle.plugins.module;
 
 import com.diffplug.gradle.spotless.SpotlessExtension;
+import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
 import org.gradle.api.GradleException;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Plugin;
@@ -42,41 +42,45 @@ import org.noelware.infra.gradle.Licenses;
  * Represents the base plugin for configuring Java projects.
  */
 public class JavaModulePlugin implements Plugin<Project> {
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public void apply(@NotNull Project project) {
         final NoelwareModuleExtension ext = project.getExtensions().findByType(NoelwareModuleExtension.class) != null
                 ? project.getExtensions().findByType(NoelwareModuleExtension.class)
                 : project.getExtensions().create("noelware", NoelwareModuleExtension.class);
 
+        assert ext != null : "BUG! Extension was not created or was not found?";
+
         project.getPlugins().apply("java");
         project.getPlugins().apply("com.diffplug.spotless");
 
         // Configure Spotless
         project.getExtensions().configure(SpotlessExtension.class, (spotless) -> {
+            final String license = ext.getLicense().getOrElse(Licenses.MIT).render(project, ext);
             spotless.java((java) -> {
-                try {
-                    java.licenseHeader(ext.getLicense()
-                            .getOrElse(Licenses.MIT)
-                            .getTemplate(
-                                    ext.getProjectName()
-                                            .getOrElse(project.getRootProject().getName()),
-                                    ext.getProjectDescription()
-                                            .getOrElse(
-                                                    project.getDescription() != null
-                                                            ? project.getDescription()
-                                                            : "fill this out"),
-                                    ext.getCurrentYear()
-                                            .getOrElse(String.valueOf(
-                                                    Calendar.getInstance().get(Calendar.YEAR))),
-                                    ext.getProjectEmoji().getOrElse("")));
+                java.licenseHeader(license);
+                java.trimTrailingWhitespace();
+                java.removeUnusedImports();
+                java.palantirJavaFormat();
+                java.endWithNewline();
+            });
 
-                    java.trimTrailingWhitespace();
-                    java.removeUnusedImports();
-                    java.palantirJavaFormat();
-                    java.endWithNewline();
+            spotless.kotlinGradle(kotlin -> {
+                kotlin.endWithNewline();
+                kotlin.encoding("UTF-8");
+                kotlin.target("**/*.gradle.kts");
+
+                try {
+                    final var ktlint = kotlin.ktlint().setUseExperimental(true);
+                    if (new File(project.getRootProject().getProjectDir(), ".editorconfig").exists()) {
+                        ktlint.setEditorConfigPath(
+                                new File(project.getRootProject().getProjectDir(), ".editorconfig"));
+                    }
                 } catch (IOException e) {
-                    throw new GradleException("unable to generate license template", e);
+                    throw new GradleException("Unable to apply Ktlint to Spotless", e);
                 }
+
+                kotlin.licenseHeader(license, "(package |@file|import |pluginManagement|plugins|rootProject.name)");
             });
         });
 

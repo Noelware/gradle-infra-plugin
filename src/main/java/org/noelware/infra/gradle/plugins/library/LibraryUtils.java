@@ -26,10 +26,13 @@ package org.noelware.infra.gradle.plugins.library;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Properties;
+import org.apache.commons.text.CaseUtils;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.credentials.AwsCredentials;
+import org.gradle.api.publish.Publication;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.tasks.SourceSet;
@@ -84,14 +87,33 @@ public class LibraryUtils {
         project.getExtensions().configure(PublishingExtension.class, (publishing) -> {
             publishing.publications((publications) -> {
                 // Create the publication
+                //
                 // We have most of this empty, so we let the project do that instead
                 // of the plugin.
-                publications.create(publicationName, MavenPublication.class, (pub) -> {
-                    pub.from(project.getComponents().getByName("java"));
+                //
+                // If the publication name exists, we will extend it and rename the publications
+                // to "<name>[Java|Kotlin]" (i.e, gradleInfraJava). Otherwise, we will just use
+                // the publication name specified.
+                final Optional<Publication> publication = publications.stream()
+                        .filter(f -> f.getName().equals(publicationName))
+                        .findAny();
+                if (publication.isPresent()) {
+                    publications.removeIf(f -> f.getName().equals(publicationName));
 
-                    pub.artifact(sourcesJar.get());
-                    pub.artifact(jarTaskProvider.get());
-                });
+                    final String pubName = CaseUtils.toCamelCase(publicationName + pluginSrc, false, '-', ' ', '_');
+                    publications.create(pubName, MavenPublication.class, (pp) -> {
+                        pp.from(project.getComponents().getByName("java"));
+                        pp.artifact(sourcesJar.get());
+                        pp.artifact(jarTaskProvider.get());
+                    });
+                } else {
+                    publications.create(publicationName, MavenPublication.class, (pub) -> {
+                        pub.from(project.getComponents().getByName("java"));
+
+                        pub.artifact(sourcesJar.get());
+                        pub.artifact(jarTaskProvider.get());
+                    });
+                }
             });
 
             publishing.repositories((repositories) -> {

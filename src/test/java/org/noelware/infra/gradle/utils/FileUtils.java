@@ -1,5 +1,5 @@
 /*
- * {{ Emoji }} gradle-infra: fill this out
+ * 🐻‍❄️🐘 gradle-infra-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,39 +21,22 @@
  * SOFTWARE.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+package org.noelware.infra.gradle.utils;
 
-plugins {
-    `kotlin-dsl`
-}
+import java.io.*;
 
-repositories {
-    maven("https://maven.floofy.dev/repo/releases")
-    maven("https://maven.noelware.org")
-    gradlePluginPortal()
-    mavenCentral()
-}
+public class FileUtils {
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static void writeFile(File file, String content) throws IOException {
+        if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+        try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(content);
+        }
+    }
 
-dependencies {
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.16.0")
-    implementation("org.noelware.gradle:gradle-infra:1.3.0")
-    implementation("dev.floofy.commons:gradle:2.5.0")
-    implementation(kotlin("gradle-plugin", "1.8.10"))
-    implementation(gradleApi())
-}
-
-kotlin {
-    jvmToolchain(17)
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.jvmTarget = "17"
-}
-
-configurations.configureEach {
-    if (isCanBeResolved) {
-        attributes {
-            attribute(GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE, project.objects.named(GradleVersion.current().version))
+    public static String readFile(File file) throws IOException {
+        try (final FileInputStream stream = new FileInputStream(file)) {
+            return new String(stream.readAllBytes());
         }
     }
 }

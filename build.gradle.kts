@@ -1,5 +1,5 @@
 /*
- * 🐻‍❄️🐘 gradle-plugin: Gradle plugin to configure sane defaults for Noelware's Gradle projects
+ * {{ Emoji }} gradle-infra: fill this out
  * Copyright (c) 2023 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,14 +21,15 @@
  * SOFTWARE.
  */
 
+import dev.floofy.utils.gradle.*
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.noelware.infra.gradle.*
-import dev.floofy.utils.gradle.*
 
 plugins {
     id("org.noelware.gradle.java-library")
     `java-gradle-plugin`
+    `kotlin-dsl`
 }
 
 group = "org.noelware.gradle"
@@ -63,6 +64,7 @@ dependencies {
     implementation("com.diffplug.spotless:spotless-plugin-gradle:6.16.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
+    implementation("org.apache.commons:commons-text:1.10.0")
     implementation("dev.floofy.commons:gradle:2.5.0")
     implementation(kotlin("gradle-plugin", "1.8.10"))
     implementation(gradleApi())
@@ -120,8 +122,8 @@ tasks {
                 mapOf(
                     "Implementation-Version" to "$VERSION",
                     "Implementation-Vendor" to "Noelware, LLC. [team@noelware.org]",
-                    "Implementation-Title" to "gradle-infra-plugin"
-                )
+                    "Implementation-Title" to "gradle-infra-plugin",
+                ),
             )
         }
     }
@@ -139,7 +141,7 @@ tasks {
                 TestLogEvent.SKIPPED,
                 TestLogEvent.STANDARD_ERROR,
                 TestLogEvent.STANDARD_OUT,
-                TestLogEvent.STARTED
+                TestLogEvent.STARTED,
             )
 
             exceptionFormat = TestExceptionFormat.FULL
@@ -150,55 +152,55 @@ tasks {
     }
 }
 
-publishing {
-    publications {
-        named<MavenPublication>("gradle-infra") {
-            groupId = "org.noelware.gradle"
-            artifactId = "gradle-infra-plugin"
-            version = "$VERSION"
-
-            pom {
-                description by "\uD83D\uDC3B\u200D❄️\uD83D\uDC18 Gradle plugin to configure sane defaults for Noelware's Gradle projects"
-                name by "gradle-infra-plugin"
-                url by "https://docs.noelware.org/libraries/java/gradle-infra-plugin/$VERSION"
-
-                organization {
-                    name by "Noelware, LLC."
-                    url by "https://noelware.org"
-                }
-
-                developers {
-                    developer {
-                        email by "team@noelware.org"
-                        name by "Noelware Team"
-                        url by "https://noelware.org"
-                    }
-
-                    developer {
-                        email by "cutie@floofy.dev"
-                        name by "Noel"
-                        url by "https://floofy.dev"
-                    }
-                }
-
-                licenses {
-                    license {
-                        name by "MIT License"
-                        url by Licenses.MIT.url()
-                    }
-                }
-
-                issueManagement {
-                    system by "GitHub"
-                    url by "https://github.com/Noelware/gradle-infra-plugin/issues"
-                }
-
-                scm {
-                    connection by "scm:git:ssh://github.com/Noelware/gradle-infra-plugin.git"
-                    developerConnection by "scm:git:ssh://git@github.com:Noelware/gradle-infra-plugin.git"
-                    url by "https://github.com/Noelware/gradle-infra-plugin"
-                }
-            }
-        }
-    }
-}
+// publishing {
+//    publications {
+//        named<MavenPublication>("gradle-infra") {
+//            groupId = "org.noelware.gradle"
+//            artifactId = "gradle-infra-plugin"
+//            version = "$VERSION"
+//
+//            pom {
+//                description by "\uD83D\uDC3B\u200D❄️\uD83D\uDC18 Gradle plugin to configure sane defaults for Noelware's Gradle projects"
+//                name by "gradle-infra-plugin"
+//                url by "https://docs.noelware.org/libraries/java/gradle-infra-plugin/$VERSION"
+//
+//                organization {
+//                    name by "Noelware, LLC."
+//                    url by "https://noelware.org"
+//                }
+//
+//                developers {
+//                    developer {
+//                        email by "team@noelware.org"
+//                        name by "Noelware Team"
+//                        url by "https://noelware.org"
+//                    }
+//
+//                    developer {
+//                        email by "cutie@floofy.dev"
+//                        name by "Noel"
+//                        url by "https://floofy.dev"
+//                    }
+//                }
+//
+//                licenses {
+//                    license {
+//                        name by "MIT License"
+//                        url by Licenses.MIT.url()
+//                    }
+//                }
+//
+//                issueManagement {
+//                    system by "GitHub"
+//                    url by "https://github.com/Noelware/gradle-infra-plugin/issues"
+//                }
+//
+//                scm {
+//                    connection by "scm:git:ssh://github.com/Noelware/gradle-infra-plugin.git"
+//                    developerConnection by "scm:git:ssh://git@github.com:Noelware/gradle-infra-plugin.git"
+//                    url by "https://github.com/Noelware/gradle-infra-plugin"
+//                }
+//            }
+//        }
+//    }
+// }
