@@ -102,13 +102,13 @@ public class LibraryUtils {
 
                     final String pubName = CaseUtils.toCamelCase(publicationName + pluginSrc, false, '-', ' ', '_');
                     publications.create(pubName, MavenPublication.class, (pp) -> {
-                        pp.from(project.getComponents().getByName("java"));
+                        pp.from(project.getComponents().getByName(pluginSrc));
                         pp.artifact(sourcesJar.get());
                         pp.artifact(jarTaskProvider.get());
                     });
                 } else {
                     publications.create(publicationName, MavenPublication.class, (pub) -> {
-                        pub.from(project.getComponents().getByName("java"));
+                        pub.from(project.getComponents().getByName(pluginSrc));
 
                         pub.artifact(sourcesJar.get());
                         pub.artifact(jarTaskProvider.get());
